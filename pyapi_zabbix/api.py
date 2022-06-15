@@ -2,7 +2,7 @@
 #
 # Copyright © 2014 Alexey Dubkov
 # patched https://github.com/syphernl
-# Copyright © 2022 Anton Baramov
+# Copyright © 2022 Anton Baranov
 # This file is part of pyapi-zabbix(fork py-zabbix)
 #
 # Py-zabbix is free software: you can redistribute it and/or modify
