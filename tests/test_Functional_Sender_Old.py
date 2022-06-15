@@ -4,7 +4,7 @@ from unittest import TestCase, skipIf
 from time import time as now
 
 from zabbix.sender import ZabbixMetric, ZabbixSender
-from pyzabbix import ZabbixResponse
+from pyapi_zabbix import ZabbixResponse
 
 
 @skipIf('TRAVIS' not in os.environ.keys(), "Travis CI test")

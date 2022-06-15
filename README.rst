@@ -1,4 +1,4 @@
-|Build Status| |Coverage| |PyPi status| |PyPi version|
+|PyPi status| |PyPi version|
 
 Zabbix module for Python
 ========================
@@ -10,9 +10,9 @@ You can install Zabbix modules for Python with pip:
 
 ::
 
-    pip install py-zabbix
+    pip install pyapi-zabbix
 
-Official documentation for `py-zabbix <https://py-zabbix.readthedocs.org/en/latest/>`__
+Official documentation for `pyapi-zabbix <https://pyapi-zabbix.readthedocs.org/en/latest/>`__
 --------------------------------------------------------------------------------------
 
 Examples
@@ -23,7 +23,7 @@ ZabbixAPI
 
 .. code:: python
 
-    from pyzabbix.api import ZabbixAPI
+    from pyapi_zabbix import ZabbixAPI
 
     # Create ZabbixAPI class instance
     zapi = ZabbixAPI(url='https://localhost/zabbix/', user='Admin', password='zabbix')
@@ -49,7 +49,7 @@ Or use 'with' statement to logout automatically:
 
 .. code:: python
 
-    from pyzabbix.api import ZabbixAPI
+    from pyapi_zabbix import ZabbixAPI
 
     # Create ZabbixAPI class instance
     with ZabbixAPI(url='https://localhost/zabbix/', user='Admin', password='zabbix') as zapi:
@@ -63,10 +63,10 @@ Enable logging:
 
     import sys
     import logging
-    from pyzabbix.api import ZabbixAPI
+    from pyapi_zabbix import ZabbixAPI
 
     # Create ZabbixAPI class instance
-    logger = logging.getLogger("pyzabbix")
+    logger = logging.getLogger("pyapi_zabbix")
     logger.setLevel(logging.DEBUG)
     handler = logging.StreamHandler(sys.stdout)
     logger.addHandler(handler)
@@ -92,7 +92,7 @@ ZabbixSender
 
 .. code:: python
 
-    from pyzabbix import ZabbixMetric, ZabbixSender
+    from pyapi_zabbix import ZabbixMetric, ZabbixSender
 
     # Send metrics to zabbix trapper
     packet = [
@@ -104,11 +104,7 @@ ZabbixSender
 
     result = ZabbixSender(use_config=True).send(packet)
 
-.. |Build Status| image:: https://travis-ci.org/adubkov/py-zabbix.svg?branch=master
-   :target: https://travis-ci.org/adubkov/py-zabbix
-.. |Coverage| image:: https://coveralls.io/repos/github/adubkov/py-zabbix/badge.svg?branch=master
-   :target: https://coveralls.io/github/adubkov/py-zabbix?branch=master
-.. |PyPi status| image:: https://img.shields.io/pypi/status/py-zabbix.svg
-   :target: https://pypi.python.org/pypi/py-zabbix/
-.. |PyPi version| image:: https://img.shields.io/pypi/v/py-zabbix.svg
-   :target: https://pypi.python.org/pypi/py-zabbix/
+.. |PyPi status| image:: https://img.shields.io/pypi/status/pyapi-zabbix.svg
+   :target: https://pypi.python.org/pypi/pyapi-zabbix/
+.. |PyPi version| image:: https://img.shields.io/pypi/v/pyapi-zabbix.svg
+   :target: https://pypi.python.org/pypi/pyapi-zabbix/

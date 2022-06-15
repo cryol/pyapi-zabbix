@@ -1,5 +1,5 @@
 import unittest
-from pyzabbix.logger import HideSensitiveService
+from pyapi_zabbix.logger import HideSensitiveService
 
 
 class TestHideSensitiveFilter(unittest.TestCase):

@@ -1,8 +1,8 @@
 import json
 
 import unittest
-from pyzabbix import ZabbixAPI, ZabbixAPIException, ssl_context_compat
-from pyzabbix.logger import HideSensitiveService
+from pyapi_zabbix import ZabbixAPI, ZabbixAPIException, ssl_context_compat
+from pyapi_zabbix.logger import HideSensitiveService
 try:
     from mock import patch
 except ImportError:
@@ -134,7 +134,7 @@ class TestZabbixAPI(unittest.TestCase):
         }
         self.urlopen_mock.return_value = MockResponse(json.dumps(ret))
 
-        with self.assertLogs('pyzabbix', level='DEBUG') as cm:
+        with self.assertLogs('pyapi_zabbix', level='DEBUG') as cm:
 
             # Create ZabbixAPI class instance
             zapi = ZabbixAPI(url='https://localhost/zabbix',
@@ -161,7 +161,7 @@ class TestZabbixAPI(unittest.TestCase):
         self.assertNotIn('0424bd59b807674191e7d77572075f33', log_string)
 
         # count number or passwords/token replacements
-        # (including 'DEBUG:pyzabbix.api:ZabbixAPI.login(Admin,********)')
+        # (including 'DEBUG:pyapi_zabbix.api:ZabbixAPI.login(Admin,********)')
         self.assertEqual(log_string.count(HideSensitiveService.HIDEMASK), 4)
 
     def test_hide_sensitive_in_exception(self):

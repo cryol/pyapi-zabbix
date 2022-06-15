@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# py-zabbix documentation build configuration file, created by
+# pyapi-zabbix documentation build configuration file, created by
 # sphinx-quickstart on Sat Mar 19 03:04:03 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -49,7 +49,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'py-zabbix'
+project = u'pyapi-zabbix'
 copyright = u'2016, Alexey Dubkov'
 author = u'Alexey Dubkov'
 
@@ -203,7 +203,7 @@ html_show_sourcelink = False
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'py-zabbixdoc'
+htmlhelp_basename = 'pyapi-zabbixdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -225,7 +225,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'py-zabbix.tex', u'py-zabbix Documentation',
+    (master_doc, 'pyapi-zabbix.tex', u'pyapi-zabbix Documentation',
      u'Alexey Dubkov', 'manual'),
 ]
 
@@ -255,7 +255,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'py-zabbix', u'py-zabbix Documentation',
+    (master_doc, 'pyapi-zabbix', u'pyapi-zabbix Documentation',
      [author], 1)
 ]
 
@@ -269,8 +269,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'py-zabbix', u'py-zabbix Documentation',
-     author, 'py-zabbix', 'One line description of project.',
+    (master_doc, 'pyapi-zabbix', u'pyapi-zabbix Documentation',
+     author, 'pyapi-zabbix', 'One line description of project.',
      'Miscellaneous'),
 ]
 

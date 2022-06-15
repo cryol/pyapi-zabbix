@@ -1,8 +1,9 @@
 # -*- encoding: utf-8 -*-
 #
 # Copyright © 2014 Alexey Dubkov
-#
-# This file is part of py-zabbix.
+# patched https://github.com/syphernl
+# Copyright © 2022 Anton Baramov
+# This file is part of pyapi-zabbix(fork py-zabbix)
 #
 # Py-zabbix is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with py-zabbix. If not, see <http://www.gnu.org/licenses/>.
+# along with pyapi-zabbix. If not, see <http://www.gnu.org/licenses/>.
 
 import json
 import logging
@@ -43,16 +44,17 @@ logger.addFilter(HideSensitiveFilter())
 
 class ZabbixAPIException(Exception):
     """ZabbixAPI exception class.
-
     :code list:
     :32602: Invalid params (eg already exists)
     :32500: No permissions
     """
+
     def __init__(self, *args):
         super(Exception, self).__init__(*args)
         if len(args) == 1 and isinstance(args[0], dict):
             self.error = args[0]
-            self.error['json'] = HideSensitiveService.hide_sensitive(self.error['json'])
+            self.error['json'] = HideSensitiveService.hide_sensitive(
+                self.error['json'])
             self.message = self.error['message']
             self.code = self.error['code']
             self.data = self.error['data']
@@ -61,11 +63,9 @@ class ZabbixAPIException(Exception):
 
 class ZabbixAPIObjectClass(object):
     """ZabbixAPI Object class.
-
     :type group: str
     :param group: Zabbix API method group name.
         Example: `apiinfo.version` method it will be `apiinfo`.
-
     :type parent: :class:`zabbix.api.ZabbixAPI` object
     :param parent: ZabbixAPI object to use as parent.
     """
@@ -76,7 +76,6 @@ class ZabbixAPIObjectClass(object):
 
     def __getattr__(self, name):
         """Dynamically create a method.
-
         :type name: str
         :param name: Zabbix API method name.
             Example: `apiinfo.version` method it will be `version`.
@@ -132,27 +131,24 @@ def urlopen(*args, **kwargs):
 
 class ZabbixAPI(object):
     """ZabbixAPI class, implement interface to zabbix api.
-
     :type url: str
     :param url: URL to zabbix api. Default: `ZABBIX_URL` or
         `https://localhost/zabbix`
-
     :type use_authenticate: bool
     :param use_authenticate: Use `user.authenticate` method if `True` else
         `user.login`.
-
     :type use_basic_auth: bool
     :param use_basic_auth: Using basic auth if `True`
-
     :type user: str
     :param user: Zabbix user name. Default: `ZABBIX_USER` or `'Admin'`.
-
     :type password: str
     :param password: Zabbix user password. Default `ZABBIX_PASSWORD` or
         `zabbix`.
-
-    >>> from pyzabbix import ZabbixAPI
+    :type api_token: str
+    :param password: Zabbix API Token.
+    >>> from pyapi_zabbix import ZabbixAPI
     >>> z = ZabbixAPI('https://zabbix.server', user='Admin', password='zabbix')
+    >>> # z = ZabbixAPI('https://zabbix.server', api_token='xxxx')
     >>> # Get API Version
     >>> z.api_info.version()
     >>> u'2.2.1'
@@ -165,24 +161,32 @@ class ZabbixAPI(object):
     >>> z.do_request('host.getobjects', {'status': 1})
     """
 
-    def __init__(self, url=None, use_authenticate=False, use_basic_auth=False, user=None,
-                 password=None):
+    def __init__(
+        self, url=None, use_authenticate=False, use_basic_auth=False,
+        user=None, password=None, api_token=None
+    ):
 
         url = url or os.environ.get('ZABBIX_URL') or 'https://localhost/zabbix'
         user = user or os.environ.get('ZABBIX_USER') or 'Admin'
         password = password or os.environ.get('ZABBIX_PASSWORD') or 'zabbix'
+        api_token = api_token or os.environ.get('ZABBIX_API_TOKEN', None)
 
         self.use_authenticate = use_authenticate
         self.use_basic_auth = use_basic_auth
-        self.auth = None
         self.url = url + '/api_jsonrpc.php'
-        self.base64_cred = self.cred_to_base64(user, password) if self.use_basic_auth else None
-        self._login(user, password)
+
+        if api_token is not None:
+            self.auth = api_token
+        else:
+            self.auth = None
+            self.base64_cred = self.cred_to_base64(
+                user, password) if self.use_basic_auth else None
+            self._login(user, password)
+
         logger.debug("JSON-PRC Server: %s", self.url)
 
     def __getattr__(self, name):
         """Dynamically create an object class (ie: host).
-
         :type name: str
         :param name: Zabbix API method group name.
             Example: `apiinfo.version` method it will be `apiinfo`.
@@ -192,15 +196,14 @@ class ZabbixAPI(object):
 
     def _login(self, user='', password=''):
         """Do login to zabbix server.
-
         :type user: str
         :param user: Zabbix user
-
         :type password: str
         :param password: Zabbix user password
         """
 
-        logger.debug("ZabbixAPI.login({0},{1})".format(user, HideSensitiveService.HIDEMASK))
+        logger.debug("ZabbixAPI.login({0},{1})".format(
+            user, HideSensitiveService.HIDEMASK))
 
         self.auth = None
 
@@ -229,17 +232,16 @@ class ZabbixAPI(object):
         """Create header for basic authorization
         :type user: str
         :param user: Zabbix user
-
         :type password: str
         :param password: Zabbix user password
         :return: str
         """
-        base64string = base64.b64encode('{}:{}'.format(user, password).encode())
+        base64string = base64.b64encode(
+            '{}:{}'.format(user, password).encode())
         return base64string.decode()
 
     def api_version(self):
         """Return version of server Zabbix API.
-
         :rtype: str
         :return: Version of server Zabbix API.
         """
@@ -248,14 +250,11 @@ class ZabbixAPI(object):
 
     def do_request(self, method, params=None):
         """Make request to Zabbix API.
-
         :type method: str
         :param method: ZabbixAPI method, like: `apiinfo.version`.
-
         :type params: str
         :param params: ZabbixAPI method arguments.
-
-        >>> from pyzabbix import ZabbixAPI
+        >>> from pyapi_zabbix import ZabbixAPI
         >>> z = ZabbixAPI()
         >>> apiinfo = z.do_request('apiinfo.version')
         """
@@ -283,7 +282,7 @@ class ZabbixAPI(object):
         req = urllib2.Request(self.url, data)
         req.get_method = lambda: 'POST'
         req.add_header('Content-Type', 'application/json-rpc')
-        req.add_header('User-Agent', 'py-zabbix/{}'.format(__version__))
+        req.add_header('User-Agent', 'pyapi-zabbix/{}'.format(__version__))
 
         if self.use_basic_auth:
             req.add_header("Authorization", "Basic {}".format(self.base64_cred))
@@ -307,32 +306,24 @@ class ZabbixAPI(object):
 
     def get_id(self, item_type, item=None, with_id=False, hostid=None, **args):
         """Return id or ids of zabbix objects.
-
         :type item_type: str
         :param item_type: Type of zabbix object. (eg host, item etc.)
-
         :type item: str
         :param item: Name of zabbix object. If it is `None`, return list of
             all objects in the scope.
-
         :type with_id: bool
         :param with_id: Returned values will be in zabbix json `id` format.
             Examlpe: `{'itemid: 128}`
-
         :type name: bool
         :param name: Return name instead of id.
-
         :type hostid: int
         :param hostid: Filter objects by specific hostid.
-
         :type templateids: int
         :param tempateids: Filter objects which only belong to specific
             templates by template id.
-
         :type app_name: str
         :param app_name: Filter object which only belong to specific
             application.
-
         :rtype: int or list
         :return: Return single `id`, `name` or list of values.
         """

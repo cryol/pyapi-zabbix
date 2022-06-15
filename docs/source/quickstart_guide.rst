@@ -12,7 +12,7 @@ You can install Zabbix modules for Python with pip:
 
 .. code-block:: bash
 
-    pip install py-zabbix
+    pip install pyapi-zabbix
 
 ========
 Examples
@@ -24,7 +24,7 @@ ZabbixAPI
 
 You can make zabbix api call with two ways.
 
-1. By With dynamicaly mapping :class:`pyzabbix.api.ZabbixAPI` methods on zabbix api:
+1. By With dynamicaly mapping :class:`pyapi_zabbix.api.ZabbixAPI` methods on zabbix api:
 
 ::
 
@@ -42,7 +42,7 @@ Get list of not monitored hosts from zabbix
 
 ::
 
-    from pyzabbix import ZabbixAPI
+    from pyapi_zabbix import ZabbixAPI
 
     # Create ZabbixAPI class instance
     zapi = ZabbixAPI(url='https://localhost/zabbix/', user='Admin', password='zabbix')
@@ -76,7 +76,7 @@ from zabbix_agentd.conf file.
 
 ::
 
-    from pyzabbix import ZabbixMetric, ZabbixSender
+    from pyapi_zabbix import ZabbixMetric, ZabbixSender
 
     packet = [
       ZabbixMetric('centos', 'test[cpu_usage]', 2),

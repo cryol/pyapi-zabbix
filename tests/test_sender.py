@@ -13,7 +13,7 @@ except ImportError:
     from unittest.mock import patch, call, mock_open
     autospec = True
 
-from pyzabbix import ZabbixMetric, ZabbixSender, ZabbixResponse
+from pyapi_zabbix import ZabbixMetric, ZabbixSender, ZabbixResponse
 
 
 class TestZabbixResponse(TestCase):
@@ -28,10 +28,10 @@ class TestZabbixResponse(TestCase):
     def test_repr(self):
         zr = ZabbixResponse()
         result = json.dumps({'processed': zr._processed,
-                             'failed':    zr._failed,
-                             'total':     zr._total,
-                             'time':      str(zr._time),
-                             'chunk':     zr._chunk})
+                             'failed': zr._failed,
+                             'total': zr._total,
+                             'time': str(zr._time),
+                             'chunk': zr._chunk})
         self.assertEqual(zr.__repr__(), result)
 
 
@@ -86,7 +86,7 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         filename = os.path.join(folder, 'data/zabbix_agentd.conf')
         file = open(filename, 'r')
         f = file.read()
-        with patch('pyzabbix.sender.open', mock_open(read_data=f)):
+        with patch('pyapi_zabbix.sender.open', mock_open(read_data=f)):
             zs = ZabbixSender(use_config=True)
             self.assertEqual(zs.zabbix_uri, [('192.168.1.2', 10051)])
         file.close()
@@ -148,8 +148,8 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         self.assertEqual(result[:13],
                          b'ZBXD\x01\xc4\x00\x00\x00\x00\x00\x00\x00')
 
-    @patch('pyzabbix.sender.socket.socket', autospec=autospec)
-    @skip('Issue: #27 [https://github.com/blacked/py-zabbix/issues/27]')
+    @patch('pyapi_zabbix.sender.socket.socket', autospec=autospec)
+    @skip('Issue: #27 [https://github.com/blacked/pyapi-zabbix/issues/27]')
     def test_recive(self, mock_socket):
         mock_data = b'\x01\\\x00\x00\x00\x00\x00\x00\x00'
         mock_socket.recv.side_effect = (False, b'ZBXD', mock_data)
@@ -160,7 +160,7 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         self.assertEqual(mock_socket.recv.call_count, 3)
         mock_socket.recv.assert_has_calls([call(13), call(13), call(9)])
 
-    @patch('pyzabbix.sender.socket.socket', autospec=autospec)
+    @patch('pyapi_zabbix.sender.socket.socket', autospec=autospec)
     def test_get_response(self, mock_socket):
         mock_socket.recv.side_effect = (self.resp_header, self.resp_body)
 
@@ -169,7 +169,7 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         mock_socket.recv.assert_has_calls([call(92)])
         self.assertEqual(result['response'], 'success')
 
-    @patch('pyzabbix.sender.socket.socket', autospec=autospec)
+    @patch('pyapi_zabbix.sender.socket.socket', autospec=autospec)
     def test_get_response_fail(self, mock_socket):
         mock_socket.recv.side_effect = (b'IDDQD', self.resp_body)
 
@@ -177,7 +177,7 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         result = zs._get_response(mock_socket)
         self.assertFalse(result)
 
-    @patch('pyzabbix.sender.socket.socket', autospec=autospec)
+    @patch('pyapi_zabbix.sender.socket.socket', autospec=autospec)
     def test_get_response_fail_s_close(self, mock_socket):
         mock_socket.recv.side_effect = (b'IDDQD', self.resp_body)
         mock_socket.close.side_effect = socket.error
@@ -186,7 +186,7 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         result = zs._get_response(mock_socket)
         self.assertFalse(result)
 
-    @patch('pyzabbix.sender.socket.socket', autospec=autospec)
+    @patch('pyapi_zabbix.sender.socket.socket', autospec=autospec)
     def test_send(self, mock_socket):
         mock_data = b'\x01\\\x00\x00\x00\x00\x00\x00\x00'
         mock_socket.return_value = mock_socket
@@ -200,7 +200,7 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         self.assertEqual(result.total, 10)
         self.assertEqual(result.failed, 10)
 
-    @patch('pyzabbix.sender.socket.socket', autospec=autospec)
+    @patch('pyapi_zabbix.sender.socket.socket', autospec=autospec)
     def test_send_sendall_exception(self, mock_socket):
         mock_socket.return_value = mock_socket
         mock_socket.sendall.side_effect = socket.error
@@ -210,7 +210,7 @@ failed: 10; total: 10; seconds spent: 0.000078"}
         with self.assertRaises(socket.error):
             zs.send([zm])
 
-    @patch('pyzabbix.sender.socket.socket', autospec=autospec)
+    @patch('pyapi_zabbix.sender.socket.socket', autospec=autospec)
     def test_send_failed(self, mock_socket):
         mock_data = b'\x01\\\x00\x00\x00\x00\x00\x00\x00'
         mock_socket.return_value = mock_socket

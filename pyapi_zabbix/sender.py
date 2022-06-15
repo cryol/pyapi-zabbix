@@ -2,7 +2,7 @@
 #
 # Copyright © 2014 Alexey Dubkov
 #
-# This file is part of py-zabbix.
+# This file is part of pyapi-zabbix.
 #
 # Py-zabbix is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with py-zabbix. If not, see <http://www.gnu.org/licenses/>.
+# along with pyapi-zabbix. If not, see <http://www.gnu.org/licenses/>.
 
 from decimal import Decimal
 import inspect
@@ -43,6 +43,7 @@ logger.addHandler(null_handler)
 class ZabbixResponse(object):
     """The :class:`ZabbixResponse` contains the parsed response from Zabbix.
     """
+
     def __init__(self):
         self._processed = 0
         self._failed = 0
@@ -109,7 +110,7 @@ class ZabbixMetric(object):
     :type clock: int
     :param clock: Unix timestamp. Current time will used if not specified.
 
-    >>> from pyzabbix import ZabbixMetric
+    >>> from pyapi_zabbix import ZabbixMetric
     >>> ZabbixMetric('localhost', 'cpu[usage]', 20)
     """
 
@@ -156,7 +157,7 @@ class ZabbixSender(object):
     :param socket_wrapper: to provide a socket wrapper function to be used to
          wrap the socket connection to zabbix.
          Example:
-            from pyzabbix import ZabbixSender
+            from pyapi_zabbix import ZabbixSender
             import ssl
             secure_connection_option = dict(..)
             zs = ZabbixSender(
@@ -168,7 +169,7 @@ class ZabbixSender(object):
     :type timeout: int
     :param timeout: Number of seconds before call to Zabbix server times out
          Default: 10
-    >>> from pyzabbix import ZabbixMetric, ZabbixSender
+    >>> from pyapi_zabbix import ZabbixMetric, ZabbixSender
     >>> metrics = []
     >>> m = ZabbixMetric('localhost', 'cpu[usage]', 20)
     >>> metrics.append(m)
@@ -353,8 +354,10 @@ class ZabbixSender(object):
         response_header = self._receive(connection, 13)
         logger.debug('Response header: %s', response_header)
 
-        if (not response_header.startswith(b'ZBXD\x01') or
-                len(response_header) != 13):
+        if (
+            not response_header.startswith(b'ZBXD\x01') or len(
+                response_header) != 13
+        ):
             logger.debug('Zabbix return not valid response.')
             result = False
         else:
@@ -395,7 +398,9 @@ class ZabbixSender(object):
                 try:
                     connection_ = socket.socket(socket.AF_INET6)
                 except socket.error:
-                    raise Exception("Error creating socket for {host_addr}".format(host_addr=host_addr))
+                    raise Exception(
+                        "Error creating socket for {host_addr}".format(
+                            host_addr=host_addr))
             if self.socket_wrapper:
                 connection = self.socket_wrapper(connection_)
             else:
@@ -415,7 +420,8 @@ class ZabbixSender(object):
             except socket.error as err:
                 # In case of error we should close connection, otherwise
                 # we will close it after data will be received.
-                logger.warning('Sending failed: %s', getattr(err, 'msg', str(err)))
+                logger.warning(
+                    'Sending failed: %s', getattr(err, 'msg', str(err)))
                 connection.close()
                 raise err
 
@@ -435,7 +441,7 @@ class ZabbixSender(object):
         :param metrics: List of :class:`zabbix.sender.ZabbixMetric` to send
             to Zabbix
 
-        :rtype: :class:`pyzabbix.sender.ZabbixResponse`
+        :rtype: :class:`pyapi_zabbix.sender.ZabbixResponse`
         :return: Parsed response from Zabbix Server
         """
         result = ZabbixResponse()
