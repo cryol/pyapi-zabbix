@@ -50,8 +50,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'pyapi-zabbix'
-copyright = u'2016, Alexey Dubkov'
-author = u'Alexey Dubkov'
+copyright = u'2022, Anton Baranov'
+author = u' Anton Baranov'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -226,7 +226,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'pyapi-zabbix.tex', u'pyapi-zabbix Documentation',
-     u'Alexey Dubkov', 'manual'),
+     u'Anton Baranov', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
